@@ -1,0 +1,51 @@
+const Quiz = require('../models/quizModel');
+
+// Get leaderboard data for a specific quiz
+exports.getLeaderboard = async (req, res) => {
+    try {
+      const { id } = req.params;
+      const quiz = await Quiz.findById(id);
+  
+      if (!quiz) {
+        return res.status(404).json({ error: 'Quiz not found' });
+      }
+  
+      // Sort the leaderboard entries by score in descending order
+      const sortedLeaderboard = quiz.leaderboard.sort((a, b) => b.score - a.score);
+  
+      // Calculate rankings based on scores
+      const leaderboardWithRankings = sortedLeaderboard.map((entry, index) => ({
+        ...entry,
+        rank: index + 1,
+      }));
+  
+      res.json({ leaderboard: leaderboardWithRankings });
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ error: 'Failed to fetch leaderboard' });
+    }
+  };
+  
+
+// Add leaderboard entry for a specific quiz
+exports.addLeaderboardEntry = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const { email, score } = req.body;
+
+    const quiz = await Quiz.findById(id);
+
+    if (!quiz) {
+      return res.status(404).json({ error: 'Quiz not found' });
+    }
+
+    // Add the new entry to the leaderboard
+    quiz.leaderboard.push({ email, score });
+    await quiz.save();
+
+    res.status(201).json({ message: 'Leaderboard entry added successfully' });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: 'Failed to add leaderboard entry' });
+  }
+};
