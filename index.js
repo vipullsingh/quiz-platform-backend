@@ -28,7 +28,7 @@ mongoose.connect(process.env.MONGODB_URL, {
   });
 
 //home route
-app.get('/',(res,req)=>{
+app.get('/',(req,res)=>{
   res.send("Welcome to quiz platform API")
 })
 // Routes
