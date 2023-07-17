@@ -27,6 +27,10 @@ mongoose.connect(process.env.MONGODB_URL, {
     console.error('Error connecting to MongoDB:', error);
   });
 
+//home route
+app.get('/',(res,req)=>{
+  res.send("Welcome to quiz platform API")
+})
 // Routes
 app.use('/api/quizzes', quizRoutes);
 app.use('/api/users', userRoutes);
